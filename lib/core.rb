@@ -9,3 +9,5 @@ loader.setup
 
 module Core
 end
+
+loader.eager_load
