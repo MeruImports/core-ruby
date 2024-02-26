@@ -11,7 +11,7 @@ require_relative "../lib/core"
 
 Mongoid.load!("test/mongoid.yml")
 
-class AddresMongoidDocument
+class AddressMongoidDocument
   include Mongoid::Document
 
   field :zip_code, type: String
@@ -24,7 +24,7 @@ class UserMongoidDocument
   field :admin, type: Boolean
   field :age, type: Integer
   field :last_name, type: String
-  embeds_one :address, class_name: "AddresMongoidDocument"
+  embeds_one :address, class_name: "AddressMongoidDocument"
 
   accepts_nested_attributes_for :address
 end
