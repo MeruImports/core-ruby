@@ -5,7 +5,8 @@ module Core
     module Grape
       module ErrorHandler
         COMMON_ERRORS = {
-          Domain::InvalidIdError => 422
+          Domain::InvalidIdError => 422,
+          Domain::Criteria::InvalidFilterError => 422
         }.freeze
 
         def exceptions = COMMON_ERRORS.merge(errors)

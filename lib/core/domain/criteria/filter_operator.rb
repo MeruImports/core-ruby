@@ -8,7 +8,7 @@ module Core
           EQUAL = "equal",
           NOT_EQUAL = "not_equal",
           GT = "gt",
-          GTE = 'gte',
+          GTE = "gte",
           LT = "lt",
           LTE = "lte",
           CONTAINS = "contains",
