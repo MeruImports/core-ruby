@@ -1,0 +1,22 @@
+version: '3'
+services:
+  app:
+    env_file:
+      - .env
+    image: core-ruby
+    build:
+      context: .
+    volumes:
+      - .:/app
+    depends_on:
+      - mongodb
+    links:
+      - mongodb
+  mongodb:
+    image: mongo:6
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+volumes:
+  mongo_data: {}
