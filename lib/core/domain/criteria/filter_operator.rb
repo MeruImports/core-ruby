@@ -8,7 +8,9 @@ module Core
           EQUAL = "equal",
           NOT_EQUAL = "not_equal",
           GT = "gt",
+          GTE = 'gte',
           LT = "lt",
+          LTE = "lte",
           CONTAINS = "contains",
           NOT_CONTAINS = "not_contains"
         ].freeze

@@ -54,6 +54,23 @@ module Core
             .offset(mongo_criteria.offset)
           assert_equal 1, docs.count
         end
+
+        def tests_gte_and_lte_filter
+          filters = {"age__gte" => 20, "age__lte" => 25}
+          order_by = "name"
+          order_type = "asc"
+          limit = 10
+          offset = 0
+          criteria = Domain::Criteria.from_values(filters, order_by, order_type, limit, offset)
+          mongo_criteria = MongoidCriteriaConverter.new(criteria)
+          assert_equal({"age" => {"$gte" => 20, "$lte" => 25}}, mongo_criteria.filters)
+          docs = UserMongoidDocument
+            .where(mongo_criteria.filters)
+            .order(mongo_criteria.order)
+            .limit(mongo_criteria.limit)
+            .offset(mongo_criteria.offset)
+          assert_equal 2, docs.count
+        end
       end
     end
   end

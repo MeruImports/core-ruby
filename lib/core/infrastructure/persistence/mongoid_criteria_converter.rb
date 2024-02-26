@@ -8,7 +8,9 @@ module Core
           Domain::Criteria::FilterOperator::EQUAL => :equal_filter,
           Domain::Criteria::FilterOperator::NOT_EQUAL => :not_equal_filter,
           Domain::Criteria::FilterOperator::GT => :greater_than_filter,
+          Domain::Criteria::FilterOperator::GTE => :greater_or_equal_than_filter,
           Domain::Criteria::FilterOperator::LT => :less_than_filter,
+          Domain::Criteria::FilterOperator::LTE => :less_or_equal_than_filter,
           Domain::Criteria::FilterOperator::CONTAINS => :contains_filter,
           Domain::Criteria::FilterOperator::NOT_CONTAINS => :not_contains_filter
         }.freeze
@@ -47,7 +49,13 @@ module Core
         def greater_than_filter(filter) = {"$gt" => filter.value}
 
         # @param filter [Domain::Criteria::Filter]
+        def greater_or_equal_than_filter(filter) = {"$gte" => filter.value}
+
+        # @param filter [Domain::Criteria::Filter]
         def less_than_filter(filter) = {"$lt" => filter.value}
+
+        # @param filter [Domain::Criteria::Filter]
+        def less_or_equal_than_filter(filter) = {"$lte" => filter.value}
 
         # @param filter [Domain::Criteria::Filter]
         def contains_filter(filter) = {"$regex" => filter.value}
