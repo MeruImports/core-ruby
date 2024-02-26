@@ -19,7 +19,8 @@ module Core
         # @return [Hash]
         def filters
           @criteria.filters.filters.each_with_object({}) do |filter, criteria|
-            criteria[filter.field] = send(FILTERS[filter.operator], filter)
+            criteria[filter.field] ||= {}
+            criteria[filter.field].merge!(send(FILTERS[filter.operator], filter))
           end
         end
 

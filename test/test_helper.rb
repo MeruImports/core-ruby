@@ -11,7 +11,7 @@ require_relative "../lib/core"
 
 Mongoid.load!("test/mongoid.yml")
 
-class MongoidDocumentTest
+class UserMongoidDocument
   include Mongoid::Document
 
   field :name, type: String
