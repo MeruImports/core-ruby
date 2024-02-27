@@ -13,9 +13,11 @@ module Core
                 age: 20,
                 last_name: "Doe",
                 permissions: ["read", "write"],
+                _keywords: ["Jonh", "Doe"],
                 address_attributes: {zip_code: "97000"}
               },
-              {name: "Jane", admin: false, age: 25, last_name: "Doe"}
+              {name: "Jane", admin: false, age: 25, last_name: "Doe", _keywords: ["Jane", "Doe"]},
+              {name: "Óscar", admin: false, age: 40, last_name: "Doe", _keywords: ["Óscar", "Doe"]}
             ]
           )
         end
@@ -76,6 +78,51 @@ module Core
             .limit(mongo_criteria.limit)
             .offset(mongo_criteria.offset)
           assert_equal 2, docs.count
+        end
+
+        def test_search_filter
+          query = {"keywords__search" => "jo ja", "age__gte" => 18, "age__lte" => 25}
+          criteria = Domain::Criteria.from_values(query:)
+          mongo_criteria = MongoidCriteriaConverter.new(criteria)
+          assert_equal(
+            {
+              "$or" => [{"_keywords" => /jo/i}, {"_keywords" => /ja/i}],
+              "age" => {"$gte" => 18, "$lte" => 25}
+            },
+            mongo_criteria.filters
+          )
+          docs = UserMongoidDocument
+            .where(mongo_criteria.filters)
+            .order(mongo_criteria.order)
+            .limit(mongo_criteria.limit)
+            .offset(mongo_criteria.offset)
+          assert_equal 2, docs.count
+        end
+
+        def test_empty_search_filter
+          query = {"keywords__search" => ""}
+          criteria = Domain::Criteria.from_values(query:)
+          mongo_criteria = MongoidCriteriaConverter.new(criteria)
+          assert_equal({}, mongo_criteria.filters)
+          docs = UserMongoidDocument
+            .where(mongo_criteria.filters)
+            .order(mongo_criteria.order)
+            .limit(mongo_criteria.limit)
+            .offset(mongo_criteria.offset)
+          assert_equal 3, docs.count
+        end
+
+        def test_search_filter_with_accent
+          query = {"keywords__search" => "Ós"}
+          criteria = Domain::Criteria.from_values(query:)
+          mongo_criteria = MongoidCriteriaConverter.new(criteria)
+          assert_equal({"$or" => [{"_keywords" => /Ós/i}]}, mongo_criteria.filters)
+          docs = UserMongoidDocument
+            .where(mongo_criteria.filters)
+            .order(mongo_criteria.order)
+            .limit(mongo_criteria.limit)
+            .offset(mongo_criteria.offset)
+          assert_equal 1, docs.count
         end
       end
     end

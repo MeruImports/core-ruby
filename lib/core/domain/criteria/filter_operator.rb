@@ -14,7 +14,8 @@ module Core
           CONTAINS = "contains",
           NOT_CONTAINS = "not_contains",
           IN = "in",
-          NOT_IN = "nin"
+          NOT_IN = "nin",
+          SEARCH = "search"
         ].freeze
 
         private_constant :OPERATORS

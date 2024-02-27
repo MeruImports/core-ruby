@@ -4,7 +4,7 @@ module Core
   module Domain
     module ValueObject
       class UUID
-        # This regex checks whether a string conforms to the format of a UUID version 4.
+        # This regexp checks whether a string conforms to the format of a UUID version 4.
         # @type [Regexp]
         REGEXP = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
@@ -27,8 +27,7 @@ module Core
         # @return [void]
         # @raise [InvalidIdError]
         def ensure_is_valid_uuid
-          return if REGEXP.match?(@value)
-          raise InvalidIdError, @value
+          raise InvalidIdError, @value unless REGEXP.match?(@value)
         end
       end
     end

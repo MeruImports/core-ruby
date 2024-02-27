@@ -57,6 +57,13 @@ module Core
           Criteria.from_values(query:, order_by:, order_type:, limit:, offset:)
         end
       end
+
+      def test_search_filter
+        query = {"keywords__search" => "John"}
+        criteria = Criteria.from_values(query:)
+        assert_equal true, criteria.filters?
+        assert_equal [{field: "keywords", operator: "search", value: "John"}], criteria.filters.to_primitives
+      end
     end
   end
 end
