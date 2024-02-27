@@ -3,3 +3,5 @@ coverage
 .env*
 !.env.development
 !.env.test
+doc
+.yardoc
