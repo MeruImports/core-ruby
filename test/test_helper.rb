@@ -25,12 +25,12 @@ class UserMongoidDocument
   field :age, type: Integer
   field :last_name, type: String
   field :permissions, type: Array
-  field :_keywords, type: Array
+  field :keywords, type: Array
   embeds_one :address, class_name: "AddressMongoidDocument"
 
   accepts_nested_attributes_for :address
 
-  index({_keywords: 1})
+  index({keywords: 1})
 end
 
 UserMongoidDocument.create_indexes

@@ -86,7 +86,7 @@ module Core
         # @param filter [Domain::Criteria::Filter]
         # @return [Hash]
         def search_filter(filter)
-          args = filter.value.split.map { |word| {"_#{filter.field}" => regexp(word)} }
+          args = filter.value.split.map { |word| {filter.field => regexp(word)} }
           args.any? ? {"$or" => args} : {}
         end
 

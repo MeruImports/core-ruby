@@ -13,11 +13,11 @@ module Core
                 age: 20,
                 last_name: "Doe",
                 permissions: ["read", "write"],
-                _keywords: ["Jonh", "Doe"],
+                keywords: ["Jonh", "Doe"],
                 address_attributes: {zip_code: "97000"}
               },
-              {name: "Jane", admin: false, age: 25, last_name: "Doe", _keywords: ["Jane", "Doe"]},
-              {name: "Óscar", admin: false, age: 40, last_name: "Doe", _keywords: ["Óscar", "Doe"]}
+              {name: "Jane", admin: false, age: 25, last_name: "Doe", keywords: ["Jane", "Doe"]},
+              {name: "Óscar", admin: false, age: 40, last_name: "Doe", keywords: ["Óscar", "Doe"]}
             ]
           )
         end
@@ -86,7 +86,7 @@ module Core
           mongo_criteria = MongoidCriteriaConverter.new(criteria)
           assert_equal(
             {
-              "$or" => [{"_keywords" => /jo/i}, {"_keywords" => /ja/i}],
+              "$or" => [{"keywords" => /jo/i}, {"keywords" => /ja/i}],
               "age" => {"$gte" => 18, "$lte" => 25}
             },
             mongo_criteria.filters
@@ -116,7 +116,7 @@ module Core
           query = {"keywords__search" => "Ós"}
           criteria = Domain::Criteria.from_values(query:)
           mongo_criteria = MongoidCriteriaConverter.new(criteria)
-          assert_equal({"$or" => [{"_keywords" => /Ós/i}]}, mongo_criteria.filters)
+          assert_equal({"$or" => [{"keywords" => /Ós/i}]}, mongo_criteria.filters)
           docs = UserMongoidDocument
             .where(mongo_criteria.filters)
             .order(mongo_criteria.order)
