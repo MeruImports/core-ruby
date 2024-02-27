@@ -32,15 +32,15 @@ module Core
       # @return [Boolean]
       def order? = !@order.none?
 
-      # @param filters [Hash, nil]
+      # @param query [Hash, nil]
       # @param order_by [String, nil]
       # @param order_type [String, nil]
       # @param limit [Integer, nil]
       # @param offset [Integer, nil]
       # @return [self]
-      def self.from_values(filters, order_by, order_type, limit, offset)
+      def self.from_values(query: nil, order_by: nil, order_type: nil, limit: nil, offset: nil)
         new(
-          Filters.from_values(filters || {}),
+          Filters.from_values(query || {}),
           Order.from_values(order_by, order_type),
           limit || 20,
           offset || 0

@@ -9,6 +9,8 @@ module Core
           Domain::Criteria::InvalidFilterError => 422
         }.freeze
 
+        private_constant :COMMON_ERRORS
+
         def exceptions = COMMON_ERRORS.merge(errors)
 
         def errors = {}

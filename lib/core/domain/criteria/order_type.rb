@@ -10,6 +10,8 @@ module Core
           NONE = "none"
         ].freeze
 
+        private_constant :TYPES
+
         # @return [String]
         attr_reader :value
 

@@ -12,6 +12,7 @@ module Core
                 admin: true,
                 age: 20,
                 last_name: "Doe",
+                permissions: ["read", "write"],
                 address_attributes: {zip_code: "97000"}
               },
               {name: "Jane", admin: false, age: 25, last_name: "Doe"}
@@ -20,19 +21,20 @@ module Core
         end
 
         def test_filters
-          filters = {
-            "name__equal" => "John",
-            "admin__not_equal" => false,
-            "age__gt" => 18,
-            "age__lt" => 25,
-            "last_name__contains" => "Do",
-            "address.zip_code__contains" => "97"
+          query = {
+            name__eq: "John",
+            admin__ne: false,
+            age__gt: 18,
+            age__lt: 25,
+            last_name__contains: "Do",
+            permissions__in: "read,write",
+            "address.zip_code__contains": "97"
           }
           order_by = "name"
           order_type = "asc"
           limit = 10
           offset = 0
-          criteria = Domain::Criteria.from_values(filters, order_by, order_type, limit, offset)
+          criteria = Domain::Criteria.from_values(query:, order_by:, order_type:, limit:, offset:)
           mongo_criteria = MongoidCriteriaConverter.new(criteria)
           assert_equal(
             {
@@ -40,6 +42,7 @@ module Core
               "admin" => {"$ne" => false},
               "age" => {"$gt" => 18, "$lt" => 25},
               "last_name" => {"$regex" => "Do"},
+              "permissions" => {"$in" => ["read", "write"]},
               "address.zip_code" => {"$regex" => "97"}
             },
             mongo_criteria.filters
@@ -55,15 +58,18 @@ module Core
           assert_equal 1, docs.count
         end
 
-        def tests_gte_and_lte_filter
-          filters = {"age__gte" => 20, "age__lte" => 25}
+        def test_gte_and_lte_filter
+          query = {age__gte: 20, age__lte: 25, permissions__nin: "update,delete"}
           order_by = "name"
           order_type = "asc"
           limit = 10
           offset = 0
-          criteria = Domain::Criteria.from_values(filters, order_by, order_type, limit, offset)
+          criteria = Domain::Criteria.from_values(query:, order_by:, order_type:, limit:, offset:)
           mongo_criteria = MongoidCriteriaConverter.new(criteria)
-          assert_equal({"age" => {"$gte" => 20, "$lte" => 25}}, mongo_criteria.filters)
+          assert_equal(
+            {"age" => {"$gte" => 20, "$lte" => 25}, "permissions" => {"$nin" => ["update", "delete"]}},
+            mongo_criteria.filters
+          )
           docs = UserMongoidDocument
             .where(mongo_criteria.filters)
             .order(mongo_criteria.order)

@@ -24,6 +24,7 @@ class UserMongoidDocument
   field :admin, type: Boolean
   field :age, type: Integer
   field :last_name, type: String
+  field :permissions, type: Array
   embeds_one :address, class_name: "AddressMongoidDocument"
 
   accepts_nested_attributes_for :address

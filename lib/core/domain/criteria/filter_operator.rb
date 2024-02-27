@@ -5,15 +5,19 @@ module Core
     class Criteria
       class FilterOperator
         OPERATORS = [
-          EQUAL = "equal",
-          NOT_EQUAL = "not_equal",
+          EQUAL = "eq",
+          NOT_EQUAL = "ne",
           GT = "gt",
           GTE = "gte",
           LT = "lt",
           LTE = "lte",
           CONTAINS = "contains",
-          NOT_CONTAINS = "not_contains"
+          NOT_CONTAINS = "not_contains",
+          IN = "in",
+          NOT_IN = "nin"
         ].freeze
+
+        private_constant :OPERATORS
 
         # @return [String]
         attr_reader :value

@@ -12,8 +12,12 @@ module Core
           Domain::Criteria::FilterOperator::LT => :less_than_filter,
           Domain::Criteria::FilterOperator::LTE => :less_or_equal_than_filter,
           Domain::Criteria::FilterOperator::CONTAINS => :contains_filter,
-          Domain::Criteria::FilterOperator::NOT_CONTAINS => :not_contains_filter
+          Domain::Criteria::FilterOperator::NOT_CONTAINS => :not_contains_filter,
+          Domain::Criteria::FilterOperator::IN => :in_filter,
+          Domain::Criteria::FilterOperator::NOT_IN => :not_in_filter
         }.freeze
+
+        private_constant :FILTERS
 
         # @param criteria [Domain::Criteria]
         def initialize(criteria) = @criteria = criteria
@@ -40,28 +44,44 @@ module Core
         private
 
         # @param filter [Domain::Criteria::Filter]
+        # @return [Hash]
         def equal_filter(filter) = {"$eq" => filter.value}
 
         # @param filter [Domain::Criteria::Filter]
+        # @return [Hash]
         def not_equal_filter(filter) = {"$ne" => filter.value}
 
         # @param filter [Domain::Criteria::Filter]
+        # @return [Hash]
         def greater_than_filter(filter) = {"$gt" => filter.value}
 
         # @param filter [Domain::Criteria::Filter]
+        # @return [Hash]
         def greater_or_equal_than_filter(filter) = {"$gte" => filter.value}
 
         # @param filter [Domain::Criteria::Filter]
+        # @return [Hash]
         def less_than_filter(filter) = {"$lt" => filter.value}
 
         # @param filter [Domain::Criteria::Filter]
+        # @return [Hash]
         def less_or_equal_than_filter(filter) = {"$lte" => filter.value}
 
         # @param filter [Domain::Criteria::Filter]
+        # @return [Hash]
         def contains_filter(filter) = {"$regex" => filter.value}
 
         # @param filter [Domain::Criteria::Filter]
+        # @return [Hash]
         def not_contains_filter(filter) = {"$not" => {"$regex" => filter.value}}
+
+        # @param filter [Domain::Criteria::Filter]
+        # @return [Hash]
+        def in_filter(filter) = {"$in" => filter.value.split(",").map(&:strip)}
+
+        # @param filter [Domain::Criteria::Filter]
+        # @return [Hash]
+        def not_in_filter(filter) = {"$nin" => filter.value.split(",").map(&:strip)}
       end
     end
   end
