@@ -30,7 +30,7 @@ class UserMongoidDocument
 
   accepts_nested_attributes_for :address
 
-  index({keywords: 1})
+  index({keywords: "text"})
 end
 
 UserMongoidDocument.create_indexes

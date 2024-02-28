@@ -86,7 +86,7 @@ module Core
         # @param filter [Domain::Criteria::Filter]
         # @return [Hash]
         def search_filter(filter)
-          args = filter.value.split.map { |word| {filter.field => regexp(word)} }
+          args = filter.value.to_s.split.map { |word| {filter.field => regexp(word)} }
           args.any? ? {"$or" => args} : {}
         end
 
@@ -96,7 +96,10 @@ module Core
 
         # @param value [String]
         # @return [Regexp]
-        def regexp(value) = Regexp.new(Regexp.escape(value), Regexp::IGNORECASE)
+        def regexp(value)
+          regexp = Regexp.escape(Domain::Tokenizer.sanitize(value))
+          Regexp.new(regexp, Regexp::IGNORECASE)
+        end
       end
     end
   end

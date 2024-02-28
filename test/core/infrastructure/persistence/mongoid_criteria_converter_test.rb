@@ -13,11 +13,11 @@ module Core
                 age: 20,
                 last_name: "Doe",
                 permissions: ["read", "write"],
-                keywords: ["Jonh", "Doe"],
+                keywords: Domain::Tokenizer.parse(["John", "Doe"]),
                 address_attributes: {zip_code: "97000"}
               },
-              {name: "Jane", admin: false, age: 25, last_name: "Doe", keywords: ["Jane", "Doe"]},
-              {name: "Óscar", admin: false, age: 40, last_name: "Doe", keywords: ["Óscar", "Doe"]}
+              {name: "Jane", admin: false, age: 25, last_name: "Doe", keywords: Domain::Tokenizer.parse(["Jane", "Doe"])},
+              {name: "Óscar", admin: false, age: 40, last_name: "Doe", keywords: Domain::Tokenizer.parse(["Óscar", "Doe"])}
             ]
           )
         end
@@ -112,11 +112,24 @@ module Core
           assert_equal 3, docs.count
         end
 
+        def test_nil_search_filter
+          query = {"keywords__search" => nil}
+          criteria = Domain::Criteria.from_values(query:)
+          mongo_criteria = MongoidCriteriaConverter.new(criteria)
+          assert_equal({}, mongo_criteria.filters)
+          docs = UserMongoidDocument
+            .where(mongo_criteria.filters)
+            .order(mongo_criteria.order)
+            .limit(mongo_criteria.limit)
+            .offset(mongo_criteria.offset)
+          assert_equal 3, docs.count
+        end
+
         def test_search_filter_with_accent
           query = {"keywords__search" => "Ós"}
           criteria = Domain::Criteria.from_values(query:)
           mongo_criteria = MongoidCriteriaConverter.new(criteria)
-          assert_equal({"$or" => [{"keywords" => /Ós/i}]}, mongo_criteria.filters)
+          assert_equal({"$or" => [{"keywords" => /os/i}]}, mongo_criteria.filters)
           docs = UserMongoidDocument
             .where(mongo_criteria.filters)
             .order(mongo_criteria.order)
