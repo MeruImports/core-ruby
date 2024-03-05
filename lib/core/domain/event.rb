@@ -22,7 +22,7 @@ module Core
       def to_primitives = raise NotImplementedError
 
       # @return [String]
-      def to_json = {data: to_primitives, event_id:, occurred_at:}.to_json
+      def to_json = {data: to_primitives, event_id:, event_name:, occurred_at:}.to_json
     end
   end
 end
