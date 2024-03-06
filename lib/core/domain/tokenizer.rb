@@ -21,7 +21,7 @@ module Core
 
       # @param phrase [String]
       # @return [String]
-      def self.sanitize(phrase) = ActiveSupport::Inflector.transliterate(phrase.downcase)
+      def self.sanitize(phrase) = ActiveSupport::Inflector.transliterate(phrase.to_s.downcase)
 
       private
 
