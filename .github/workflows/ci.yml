@@ -1,0 +1,27 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [review_requested, ready_for_review]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v3
+      - name: Create .env
+        run: cp .env.test .env
+      - name: Run linter
+        uses: standardrb/standard-ruby-action@v0.0.5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          USE_BUNDLE_VERSION: true
+      - name: Build project
+        run: make build
+      - name: Run tests
+        run: make tests
