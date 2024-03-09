@@ -8,6 +8,7 @@ loader.inflector.inflect("uuid" => "UUID")
 loader.setup
 
 module Core
+  def self.root = Pathname.new(__dir__).parent
 end
 
 loader.eager_load

@@ -24,6 +24,7 @@ module Core
         # @return [Boolean]
         def none? = value.eql?(NONE)
 
+        # @return [self]
         def self.none = new(NONE)
 
         private

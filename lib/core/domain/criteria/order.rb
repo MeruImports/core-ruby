@@ -24,6 +24,7 @@ module Core
           new(OrderBy.new(order_by), OrderType.new(order_type || OrderType::NONE))
         end
 
+        # @return [self]
         def self.none = new(OrderBy.none, OrderType.none)
 
         # @return [Boolean]

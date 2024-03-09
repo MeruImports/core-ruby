@@ -10,7 +10,8 @@ module Core
         # @param value [String]
         def initialize(value) = @value = value
 
-        def self.none = new(nil)
+        # @return [self]
+        def self.none = new("")
       end
     end
   end
