@@ -3,8 +3,8 @@
 module Core
   module Infrastructure
     module Persistence
-      class MongoidCriteriaConverterTest < Minitest::Test
-        def setup
+      RSpec.describe MongoidCriteriaConverter do
+        before do
           UserMongoidDocument.create!(
             [
               {
@@ -22,7 +22,7 @@ module Core
           )
         end
 
-        def test_filters
+        it "filters" do
           query = {
             name__eq: "John",
             admin__ne: false,
@@ -38,7 +38,7 @@ module Core
           offset = 0
           criteria = Domain::Criteria.from_values(query:, order_by:, order_type:, limit:, offset:)
           mongo_criteria = MongoidCriteriaConverter.new(criteria)
-          assert_equal(
+          expect(mongo_criteria.filters).to eq(
             {
               "name" => {"$eq" => "John"},
               "admin" => {"$ne" => false},
@@ -46,21 +46,20 @@ module Core
               "last_name" => {"$regex" => "Do"},
               "permissions" => {"$in" => ["read", "write"]},
               "address.zip_code" => {"$regex" => "97"}
-            },
-            mongo_criteria.filters
+            }
           )
-          assert_equal({"name" => "asc"}, mongo_criteria.order)
-          assert_equal 10, mongo_criteria.limit
-          assert_equal 0, mongo_criteria.offset
+          expect(mongo_criteria.order).to eq({"name" => "asc"})
+          expect(mongo_criteria.limit).to eq(10)
+          expect(mongo_criteria.offset).to eq(0)
           docs = UserMongoidDocument
             .where(mongo_criteria.filters)
             .order(mongo_criteria.order)
             .limit(mongo_criteria.limit)
             .offset(mongo_criteria.offset)
-          assert_equal 1, docs.count
+          expect(docs.count).to eq(1)
         end
 
-        def test_gte_and_lte_filter
+        it "gte_and_lte_filter" do
           query = {age__gte: 20, age__lte: 25, permissions__nin: "update,delete"}
           order_by = "name"
           order_type = "asc"
@@ -68,74 +67,84 @@ module Core
           offset = 0
           criteria = Domain::Criteria.from_values(query:, order_by:, order_type:, limit:, offset:)
           mongo_criteria = MongoidCriteriaConverter.new(criteria)
-          assert_equal(
-            {"age" => {"$gte" => 20, "$lte" => 25}, "permissions" => {"$nin" => ["update", "delete"]}},
-            mongo_criteria.filters
+          expect(mongo_criteria.filters).to eq(
+            {"age" => {"$gte" => 20, "$lte" => 25}, "permissions" => {"$nin" => ["update", "delete"]}}
           )
           docs = UserMongoidDocument
             .where(mongo_criteria.filters)
             .order(mongo_criteria.order)
             .limit(mongo_criteria.limit)
             .offset(mongo_criteria.offset)
-          assert_equal 2, docs.count
+          expect(docs.count).to eq(2)
         end
 
-        def test_search_filter
+        it "search_filter" do
           query = {"keywords__search" => "jo ja", "age__gte" => 18, "age__lte" => 25}
           criteria = Domain::Criteria.from_values(query:)
           mongo_criteria = MongoidCriteriaConverter.new(criteria)
-          assert_equal(
+          expect(mongo_criteria.filters).to eq(
             {
               "$or" => [{"keywords" => /jo/i}, {"keywords" => /ja/i}],
               "age" => {"$gte" => 18, "$lte" => 25}
-            },
-            mongo_criteria.filters
+            }
           )
           docs = UserMongoidDocument
             .where(mongo_criteria.filters)
             .order(mongo_criteria.order)
             .limit(mongo_criteria.limit)
             .offset(mongo_criteria.offset)
-          assert_equal 2, docs.count
+          expect(docs.count).to eq(2)
         end
 
-        def test_empty_search_filter
+        it "empty_search_filter" do
           query = {"keywords__search" => ""}
           criteria = Domain::Criteria.from_values(query:)
           mongo_criteria = MongoidCriteriaConverter.new(criteria)
-          assert_equal({}, mongo_criteria.filters)
+          expect(mongo_criteria.filters).to eq({})
           docs = UserMongoidDocument
             .where(mongo_criteria.filters)
             .order(mongo_criteria.order)
             .limit(mongo_criteria.limit)
             .offset(mongo_criteria.offset)
-          assert_equal 3, docs.count
+          expect(docs.count).to eq(3)
         end
 
-        def test_nil_search_filter
+        it "nil_search_filter" do
           query = {"keywords__search" => nil}
           criteria = Domain::Criteria.from_values(query:)
           mongo_criteria = MongoidCriteriaConverter.new(criteria)
-          assert_equal({}, mongo_criteria.filters)
+          expect(mongo_criteria.filters).to eq({})
           docs = UserMongoidDocument
             .where(mongo_criteria.filters)
             .order(mongo_criteria.order)
             .limit(mongo_criteria.limit)
             .offset(mongo_criteria.offset)
-          assert_equal 3, docs.count
+          expect(docs.count).to eq(3)
         end
 
-        def test_search_filter_with_accent
+        it "search_filter_with_accent" do
           query = {"keywords__search" => "Ós"}
           criteria = Domain::Criteria.from_values(query:)
           mongo_criteria = MongoidCriteriaConverter.new(criteria)
-          assert_equal({"$or" => [{"keywords" => /os/i}]}, mongo_criteria.filters)
+          expect(mongo_criteria.filters).to eq({"$or" => [{"keywords" => /os/i}]})
           docs = UserMongoidDocument
             .where(mongo_criteria.filters)
             .order(mongo_criteria.order)
             .limit(mongo_criteria.limit)
             .offset(mongo_criteria.offset)
-          assert_equal 1, docs.count
+          expect(docs.count).to eq(1)
+        end
+
+        it "return all documents with none criteria" do
+          criteria = Domain::Criteria.none
+          mongo_criteria = MongoidCriteriaConverter.new(criteria)
+          expect(mongo_criteria.filters).to eq({})
+          docs = UserMongoidDocument
+            .where(mongo_criteria.filters)
+            .order(mongo_criteria.order)
+            .limit(mongo_criteria.limit)
+            .offset(mongo_criteria.offset)
+          expect(docs.count).to eq(3)
         end
       end
     end

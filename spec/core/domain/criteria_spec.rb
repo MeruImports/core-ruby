@@ -1,19 +1,27 @@
-# frozen_string_literal: true
-
 module Core
   module Domain
-    class CriteriaTest < Minitest::Test
-      def test_empty_values
+    RSpec.describe Criteria do
+      it "with empty values" do
         criteria = Criteria.from_values
 
-        assert_equal [], criteria.filters.to_primitives
-        assert_equal false, criteria.filters?
-        assert_equal false, criteria.order?
-        assert_equal 20, criteria.limit
-        assert_equal 0, criteria.offset
+        expect(criteria.filters.to_primitives).to eq([])
+        expect(criteria.filters?).to eq(false)
+        expect(criteria.order?).to eq(false)
+        expect(criteria.limit).to eq(20)
+        expect(criteria.offset).to eq(0)
       end
 
-      def test_with_values
+      it "with none criteria" do
+        criteria = Criteria.none
+
+        expect(criteria.filters.to_primitives).to eq([])
+        expect(criteria.filters?).to eq(false)
+        expect(criteria.order?).to eq(false)
+        expect(criteria.limit).to eq(nil)
+        expect(criteria.offset).to eq(nil)
+      end
+
+      it "has values" do
         query = {
           name__eq: "John",
           admin__ne: false,
@@ -27,10 +35,10 @@ module Core
         order_type = "asc"
         limit = 10
         offset = 5
-
         criteria = Criteria.from_values(query:, order_by:, order_type:, limit:, offset:)
-        assert_equal true, criteria.filters?
-        assert_equal [
+
+        expect(criteria.filters?).to eq(true)
+        expect(criteria.filters.to_primitives).to eq([
           {field: "name", operator: "eq", value: "John"},
           {field: "admin", operator: "ne", value: false},
           {field: "age", operator: "gt", value: 18},
@@ -38,31 +46,31 @@ module Core
           {field: "last_name", operator: "contains", value: "Doe"},
           {field: "permissions", operator: "in", value: "read,write"},
           {field: "address.zip_code", operator: "not_contains", value: "97"}
-        ], criteria.filters.to_primitives
-        assert_equal true, criteria.order?
-        assert_equal "name", criteria.order.order_by
-        assert_equal "asc", criteria.order.order_type
-        assert_equal 10, criteria.limit
-        assert_equal 5, criteria.offset
+        ])
+        expect(criteria.order?).to eq(true)
+        expect(criteria.order.order_by).to eq("name")
+        expect(criteria.order.order_type).to eq("asc")
+        expect(criteria.limit).to eq(10)
+        expect(criteria.offset).to eq(5)
       end
 
-      def test_invalid_filter_operator
+      it "has invalid filter operator" do
         query = {"address.zip_code__regex" => "97"}
         order_by = "name"
         order_type = "asc"
         limit = 10
         offset = 5
 
-        assert_raises Criteria::InvalidFilterError do
+        expect {
           Criteria.from_values(query:, order_by:, order_type:, limit:, offset:)
-        end
+        }.to raise_error(Criteria::InvalidFilterError)
       end
 
-      def test_search_filter
+      it "has search filter" do
         query = {"keywords__search" => "John"}
         criteria = Criteria.from_values(query:)
-        assert_equal true, criteria.filters?
-        assert_equal [{field: "keywords", operator: "search", value: "John"}], criteria.filters.to_primitives
+        expect(criteria.filters?).to eq(true)
+        expect(criteria.filters.to_primitives).to eq([{field: "keywords", operator: "search", value: "John"}])
       end
     end
   end
