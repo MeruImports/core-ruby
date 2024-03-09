@@ -24,6 +24,8 @@ module Core
         # @return [Boolean]
         def none? = value.eql?(NONE)
 
+        def self.none = new(NONE)
+
         private
 
         def ensure_valid_order_type

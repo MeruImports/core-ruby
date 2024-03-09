@@ -9,6 +9,8 @@ module Core
 
         # @param value [String]
         def initialize(value) = @value = value
+
+        def self.none = new(nil)
       end
     end
   end

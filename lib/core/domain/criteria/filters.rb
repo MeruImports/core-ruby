@@ -21,6 +21,8 @@ module Core
         def self.from_values(values)
           new(values.map { |predicate, value| Filter.from_values(predicate.to_s, value) })
         end
+
+        def self.none = new([])
       end
     end
   end

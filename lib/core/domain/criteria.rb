@@ -32,6 +32,8 @@ module Core
       # @return [Boolean]
       def order? = !@order.none?
 
+      def self.none = new(Filters.none, Order.none, nil, nil)
+
       # @param query [Hash, nil]
       # @param order_by [String, nil]
       # @param order_type [String, nil]
