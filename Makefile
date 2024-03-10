@@ -2,7 +2,7 @@
 
 build:
 	@echo "Building app"
-	docker-compose build
+	ln -sf .env.development .env && docker-compose build
 
 console:
 	@echo "Starting app console"
@@ -14,4 +14,4 @@ linter:
 
 tests:
 	@echo "Running tests"
-	ln -sf .env.test .env && docker-compose run --rm app bundle exec rake test
+	ln -sf .env.test .env && docker-compose run --rm app bundle exec rspec
