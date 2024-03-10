@@ -18,20 +18,32 @@ RSpec.describe Core::Infrastructure::Grape::ErrorHandler do
   let(:app) { Rack::MockRequest.new(dummy_class.new) }
 
   describe "#schema_error!" do
-    it "when exception is InvalidIdError" do
-      response = app.get("/", params: {id: "AVB"})
-      json_response = JSON.parse(response.body)
-      expect(json_response["error_code"]).to eq("validation_error")
-      expect(json_response["message"]).to eq("Invalid params")
+    context "when exception is InvalidIdError" do
+      let(:response) { app.get("/", params: {id: "AVB"}) }
+      let(:json_response) { JSON.parse(response.body) }
+
+      it "returns error code" do
+        expect(json_response["error_code"]).to eq("validation_error")
+      end
+
+      it "returns error message" do
+        expect(json_response["message"]).to eq("Invalid params")
+      end
     end
   end
 
   describe "#domain_error!" do
-    it "when exception is InvalidFilterError" do
-      response = app.get("/", params: {id: 123, filter: "AVB"})
-      json_response = JSON.parse(response.body)
-      expect(json_response["error_code"]).to eq("invalid_filter")
-      expect(json_response["message"]).to eq("The filter AVB is not valid")
+    context "when exception is InvalidFilterError" do
+      let(:response) { app.get("/", params: {id: 123, filter: "AVB"}) }
+      let(:json_response) { JSON.parse(response.body) }
+
+      it "returns error code" do
+        expect(json_response["error_code"]).to eq("invalid_filter")
+      end
+
+      it "returns error message" do
+        expect(json_response["message"]).to eq("The filter AVB is not valid")
+      end
     end
   end
 end
