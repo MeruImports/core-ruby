@@ -109,7 +109,7 @@ RSpec.describe Core::Domain::Criteria do
     let(:criteria) { described_class.from_values(query:) }
 
     it "has search filter" do
-      expect(criteria.filters?).to eq(true) 
+      expect(criteria.filters?).to eq(true)
       expect(criteria.filters.to_primitives).to eq([{field: "keywords", operator: "search", value: "John"}])
     end
   end

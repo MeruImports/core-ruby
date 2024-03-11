@@ -10,8 +10,9 @@ RSpec.describe Core::Infrastructure::Persistence::MongoidCriteriaConverter do
           age: 20,
           last_name: "Doe",
           permissions: ["read", "write"],
-          keywords: Core::Domain::Tokenizer.parse(["John", "Doe"]),
-          address_attributes: {zip_code: "97000"}
+          keywords: Core::Domain::Tokenizer.parse(["John", "Doe", "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"]),
+          address_attributes: {zip_code: "97000"},
+          uuid: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
         },
         {name: "Jane", admin: false, age: 25, last_name: "Doe", keywords: Core::Domain::Tokenizer.parse(["Jane", "Doe"])},
         {name: "Óscar", admin: false, age: 40, last_name: "Doe", keywords: Core::Domain::Tokenizer.parse(["Óscar", "Doe"])}
@@ -76,7 +77,7 @@ RSpec.describe Core::Infrastructure::Persistence::MongoidCriteriaConverter do
   end
 
   context "with gte and lte filters" do
-    let(:query) {{age__gte: 20, age__lte: 25, permissions__nin: "update,delete"}}
+    let(:query) { {age__gte: 20, age__lte: 25, permissions__nin: "update,delete"} }
     let(:order_by) { "name" }
     let(:order_type) { "asc" }
     let(:limit) { 10 }
@@ -208,6 +209,74 @@ RSpec.describe Core::Infrastructure::Persistence::MongoidCriteriaConverter do
 
     it "return valid documents" do
       expect(docs.count).to eq(3)
+    end
+  end
+
+  context "with first part UUID filter" do
+    let(:query) { {"keywords__search" => "a0eebc99"} }
+    let(:criteria) { Core::Domain::Criteria.from_values(query:) }
+    let(:mongo_criteria) { described_class.new(criteria) }
+    let(:docs) do
+      UserMongoidDocument
+        .where(mongo_criteria.filters)
+        .order(mongo_criteria.order)
+        .limit(mongo_criteria.limit)
+        .offset(mongo_criteria.offset)
+    end
+
+    it "return one document" do
+      expect(docs.count).to eq(1)
+    end
+  end
+
+  context "with two parts UUID filter" do
+    let(:query) { {"keywords__search" => "a0eebc99-9c0b"} }
+    let(:criteria) { Core::Domain::Criteria.from_values(query:) }
+    let(:mongo_criteria) { described_class.new(criteria) }
+    let(:docs) do
+      UserMongoidDocument
+        .where(mongo_criteria.filters)
+        .order(mongo_criteria.order)
+        .limit(mongo_criteria.limit)
+        .offset(mongo_criteria.offset)
+    end
+
+    it "return one document" do
+      expect(docs.count).to eq(1)
+    end
+  end
+
+  context "with four parts UUID filter" do
+    let(:query) { {"keywords__search" => "a0eebc99-9c0b-4ef8-bb6d-"} }
+    let(:criteria) { Core::Domain::Criteria.from_values(query:) }
+    let(:mongo_criteria) { described_class.new(criteria) }
+    let(:docs) do
+      UserMongoidDocument
+        .where(mongo_criteria.filters)
+        .order(mongo_criteria.order)
+        .limit(mongo_criteria.limit)
+        .offset(mongo_criteria.offset)
+    end
+
+    it "return one document" do
+      expect(docs.count).to eq(1)
+    end
+  end
+
+  context "with full UUID filter" do
+    let(:query) { {"keywords__search" => "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"} }
+    let(:criteria) { Core::Domain::Criteria.from_values(query:) }
+    let(:mongo_criteria) { described_class.new(criteria) }
+    let(:docs) do
+      UserMongoidDocument
+        .where(mongo_criteria.filters)
+        .order(mongo_criteria.order)
+        .limit(mongo_criteria.limit)
+        .offset(mongo_criteria.offset)
+    end
+
+    it "return one document" do
+      expect(docs.count).to eq(1)
     end
   end
 end
