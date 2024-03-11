@@ -21,8 +21,11 @@ module Core
       # @return [Hash]
       def to_primitives = raise NotImplementedError
 
+      # @return [Hash]
+      def as_json = {data: to_primitives, event_id:, event_name:, occurred_at:}
+
       # @return [String]
-      def to_json = {data: to_primitives, event_id:, event_name:, occurred_at:}.to_json
+      def to_json = as_json.to_json
     end
   end
 end
