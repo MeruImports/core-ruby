@@ -27,7 +27,11 @@ module Core
 
       # @param phrase [String]
       # @return [Array<String>]
-      def tokenize(phrase) = Tokenizer.sanitize(phrase).scan(PARSER_REGEX).map(&:first)
+      def tokenize(phrase)
+        value = Tokenizer.sanitize(phrase)
+        return [value] if value.match?(ValueObject::UUID::UUID_V4_REGEXP)
+        value.scan(PARSER_REGEX).map(&:first)
+      end
     end
   end
 end

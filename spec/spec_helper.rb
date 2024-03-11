@@ -30,6 +30,7 @@ class UserMongoidDocument
   field :last_name, type: String
   field :permissions, type: Array
   field :keywords, type: Array
+  field :uuid, type: String
   embeds_one :address, class_name: "AddressMongoidDocument"
 
   accepts_nested_attributes_for :address
