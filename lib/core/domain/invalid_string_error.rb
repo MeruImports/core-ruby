@@ -3,17 +3,16 @@
 module Core
   module Domain
     class InvalidStringError < Error
-      def initialize(attribute)
-        @attribute_name = attribute[:name]
-        @message_starter = attribute[:message]
+      def initialize(klass)
+        @klass = klass
         super()
       end
 
       # @return [String]
-      def error_code = "#{@attribute_name}_not_present"
+      def error_code = "#{@klass.underscore}_not_present"
 
       # @return [String]
-      def error_message = "#{@message_starter} no puede estar vacío(a)"
+      def error_message = "#{@klass.underscore.gsub("_", " ").humanize} is not present"
     end
   end
 end
