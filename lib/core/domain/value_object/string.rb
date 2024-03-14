@@ -7,7 +7,7 @@ module Core
         # @param value [String]
         def initialize(value)
           @value = value
-          ensure_valid_string()
+          ensure_valid_string
         end
 
         # @return [String]
