@@ -2,17 +2,17 @@
 
 module Core
   module Domain
-    class InvalidStringError < Error
+    class InvalidEnumError < Error
       def initialize(klass)
         @klass = klass
         super()
       end
 
       # @return [String]
-      def error_code = "#{@klass.underscore}_not_present"
+      def error_code = "#{@klass.underscore}_not_available"
 
       # @return [String]
-      def error_message = "#{@klass.underscore.tr("_", " ").humanize} is not present"
+      def error_message = "#{@klass.underscore.tr("_", " ").humanize} is not available"
     end
   end
 end
