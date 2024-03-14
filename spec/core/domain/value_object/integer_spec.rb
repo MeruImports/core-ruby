@@ -8,7 +8,7 @@ RSpec.describe Core::Domain::ValueObject::Integer do
   end
 
   context "Valid Integer" do
-    it 'does not raise an error' do
+    it "does not raise an error" do
       expect { Dummy::Kilometrage.new(5) }.not_to raise_error
     end
   end
@@ -24,7 +24,7 @@ RSpec.describe Core::Domain::ValueObject::Integer do
       end)
     end
 
-    it "raises an InvalidIntegerError" do
+    it "raises an InvalidIntegerError when nil" do
       expect {
         Dummy::Kilometrage.new(nil)
       }.to(raise_error do |error|
