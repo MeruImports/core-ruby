@@ -23,5 +23,15 @@ RSpec.describe Core::Domain::ValueObject::Integer do
         expect(error.error_message).to eq "Kilometrage is not present"
       end)
     end
+
+    it "raises an InvalidIntegerError" do
+      expect {
+        Dummy::Kilometrage.new(nil)
+      }.to(raise_error do |error|
+        expect(error).to be_a(Core::Domain::InvalidIntegerError)
+        expect(error.error_code).to eq("kilometrage_not_present")
+        expect(error.error_message).to eq "Kilometrage is not present"
+      end)
+    end
   end
 end
