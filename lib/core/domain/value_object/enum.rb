@@ -11,6 +11,9 @@ module Core
           ensure_valid_value
         end
 
+        # @return [String]
+        attr_reader :value
+
         private
 
         def ensure_valid_value
