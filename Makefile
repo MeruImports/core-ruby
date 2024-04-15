@@ -1,4 +1,4 @@
-.PHONY: build console linter tests
+.PHONY: build console linter tests bash
 
 build:
 	@echo "Building app"
@@ -6,7 +6,11 @@ build:
 
 console:
 	@echo "Starting app console"
-	docker-compose run --rm app ruby bin/console
+	ln -sf .env.development .env && docker-compose run --rm app ruby bin/console
+
+bash:
+	@echo "Starting bash"
+	ln -sf .env.development .env && docker-compose run --rm app bash
 
 linter:
 	@echo "Running linter"
