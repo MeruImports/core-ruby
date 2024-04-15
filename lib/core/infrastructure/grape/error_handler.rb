@@ -32,6 +32,17 @@ module Core
           )
         end
 
+        def pundit_error!(exception)
+          error!(
+            {
+              error_code: "unauthorized",
+              message: "Not authorized",
+              errors: []
+            },
+            403
+          )
+        end
+
         private
 
         def format_grape_errors(errors_list)
